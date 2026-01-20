@@ -24,5 +24,6 @@ function captureFace() {
         document.getElementById("face-image").files = dataTransfer.files;
 
         alert("Face captured successfully!");
+        video.srcObject.getTracks().forEach(track => track.stop());
     }, "image/jpeg");
 }

@@ -33,5 +33,7 @@ function captureFace() {
         document.getElementById("face-image").files = dataTransfer.files;
 
         faceForm.submit();
+
+        video.srcObject.getTracks().forEach(track => track.stop());
     }, "image/jpeg");
 }
