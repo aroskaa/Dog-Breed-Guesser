@@ -31,4 +31,6 @@ Thumbs.db
 # Flask
 instance/
 .env
+firebase_key.json
 ```
+
