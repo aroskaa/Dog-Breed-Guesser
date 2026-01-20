@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 from firebase_admin import credentials, firestore
 from datetime import datetime
+from flask import send_from_directory
 import firebase_admin
 
 import cv2
@@ -149,7 +150,6 @@ def login_face():
     return redirect("/")
 
 
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -189,6 +189,9 @@ def register():
 
     return render_template("register.html")
 
+@app.route("/uploads/<path:filename>")
+def uploaded_file(filename):
+    return send_from_directory("uploads", filename)
 
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
@@ -259,7 +262,10 @@ def load_history(doc_id):
 
     data = doc.to_dict()
     return render_template(
-        "dashboard.html", predictions=data["predictions"], history=[]
+        "dashboard.html",
+        predictions=data["predictions"],
+        history=[],
+        data=data  # ⬅ kirim seluruh dokumen
     )
 
 
