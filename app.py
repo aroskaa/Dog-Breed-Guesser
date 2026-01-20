@@ -77,6 +77,25 @@ def compare_histograms(hist1, hist2):
     score = cv2.compareHist(hist1, hist2, cv2.HISTCMP_CORREL)
     return score
 
+
+def save_image_with_fallback(file):
+    filename = file.filename
+
+    # ====== PATH LOCAL ======
+    local_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+
+    try:
+        # ====== SIMULASI FIREBASE STORAGE ======
+        # (anggap ini Firebase Storage)
+        raise Exception("Firebase Storage unavailable")
+
+    except Exception as e:
+        # ====== FALLBACK KE LOCAL ======
+        file.save(local_path)
+        return {
+            "storage": "local",
+            "path": local_path
+        }
 # ======================
 # ROUTES
 # ======================
@@ -183,8 +202,10 @@ def dashboard():
     # =========================
     if request.method == "POST":
         file = request.files["image"]
-        filepath = os.path.join(app.config["UPLOAD_FOLDER"], file.filename)
-        file.save(filepath)
+
+        save_result = save_image_with_fallback(file)
+        filepath = save_result["path"]
+        storage_type = save_result["storage"]
 
         img = image.load_img(filepath, target_size=(224, 224))
         img_array = image.img_to_array(img)
@@ -200,14 +221,13 @@ def dashboard():
         ]
 
         # SIMPAN KE FIRESTORE
-        db.collection("history").add(
-            {
-                "username": session["user"],
-                "image_path": filepath,
-                "predictions": predictions,
-                "created_at": datetime.now(),
-            }
-        )
+        db.collection("history").add({
+            "username": session["user"],
+            "image_path": filepath,
+            "storage_type": storage_type,
+            "predictions": predictions,
+            "created_at": datetime.now(),
+        })
 
     # =========================
     # STEP 4: AMBIL HISTORY USER
