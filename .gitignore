@@ -1,5 +1,15 @@
+# Secrets & Credentials
+firebase_key.json
+*.json
+!package.json
+*.key
+*.pem
+.env
+.env.local
+
 # Virtual Environment
 venv/
+.venv/
 env/
 ENV/
 
@@ -13,6 +23,7 @@ __pycache__/
 # Database
 *.db
 *.sqlite3
+users.db
 
 # Uploads
 uploads/
@@ -30,7 +41,3 @@ Thumbs.db
 
 # Flask
 instance/
-.env
-firebase_key.json
-```
-
