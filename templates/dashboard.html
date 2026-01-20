@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Dog Breed Detection</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    <input type="file" name="image" accept="image/*" required>
+    <button type="submit">Detect</button>
+</form>
+
+{% if predictions %}
+    <h2>Top 3 Predictions:</h2>
+    <ul>
+        {% for prediction in predictions %}
+            <li>
+                {{ prediction.breed }} - {{ prediction.confidence }}%
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if history %}
+<h3>History</h3>
+<ul>
+{% for h in history %}
+  <li>
+    <a href="/history/{{ h.id }}">
+      {{ h.created_at.strftime("%Y-%m-%d %H:%M") }}
+    </a>
+  </li>
+{% endfor %}
+</ul>
+{% endif %}
+
+<a href="/logout">Logout</a>
+</body>
+</html>
