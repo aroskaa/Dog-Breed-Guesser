@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, redirect, session
-import firebase_admin
 from firebase_admin import credentials, firestore
 from datetime import datetime
+import firebase_admin
 
+import cv2
+import base64
 import os
 import sqlite3
 import numpy as np
@@ -29,6 +31,8 @@ cred = credentials.Certificate("firebase_key.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
+FACE_FOLDER = "faces"
+os.makedirs(FACE_FOLDER, exist_ok=True)
 
 # ======================
 # DATABASE SQLITE
@@ -55,6 +59,25 @@ model = MobileNetV2(weights="imagenet")
 
 
 # ======================
+# Face Histogram
+# ======================
+def extract_face_histogram(image_path):
+    img = cv2.imread(image_path)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    hist = cv2.calcHist([gray], [0], None, [256], [0, 256])
+    cv2.normalize(hist, hist)
+
+    return hist.flatten().tolist()
+
+def compare_histograms(hist1, hist2):
+    hist1 = np.array(hist1, dtype=np.float32)
+    hist2 = np.array(hist2, dtype=np.float32)
+
+    score = cv2.compareHist(hist1, hist2, cv2.HISTCMP_CORREL)
+    return score
+
+# ======================
 # ROUTES
 # ======================
 @app.route("/", methods=["GET", "POST"])
@@ -75,11 +98,58 @@ def login():
     return render_template("login.html")
 
 
+@app.route("/login-face", methods=["POST"])
+def login_face():
+    username = request.form["username"]
+    face_file = request.files["face_image"]
+
+    user_doc = db.collection("users").document(username).get()
+    if not user_doc.exists:
+        return redirect("/")
+
+    user_data = user_doc.to_dict()
+
+    if user_data.get("face_histogram") is None:
+        return redirect("/")
+
+    face_path = "temp_face.jpg"
+    face_file.save(face_path)
+
+    input_hist = extract_face_histogram(face_path)
+    stored_hist = user_data["face_histogram"]
+
+    score = compare_histograms(input_hist, stored_hist)
+
+    if score > 0.75:
+        session["user"] = username
+        return redirect("/dashboard")
+
+    return redirect("/")
+
+
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
         username = request.form["username"]
         password = generate_password_hash(request.form["password"])
+        
+        face_hist = None
+
+        if "face_image" in request.files:
+            face_file = request.files["face_image"]
+
+            if face_file.filename != "":
+                face_path = os.path.join(FACE_FOLDER, f"{username}.jpg")
+                face_file.save(face_path)
+
+                face_hist = extract_face_histogram(face_path)
+                
+        db.collection("users").document(username).set({
+            "username": username,
+            "password": password,
+            "face_histogram": face_hist
+        })
 
         try:
             conn = get_db()

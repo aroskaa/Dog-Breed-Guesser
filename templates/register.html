@@ -1,11 +1,33 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>Register</title>
+</head>
 <body>
-<h2>Register</h2>
-<form method="post">
-    <input name="username" placeholder="Username" required><br>
-    <input type="password" name="password" placeholder="Password" required><br>
-    <button>Register</button>
+
+<h2>Register Account</h2>
+
+<form method="POST" enctype="multipart/form-data">
+
+    <input type="text" name="username" placeholder="Username" required><br><br>
+    <input type="password" name="password" placeholder="Password" required><br><br>
+
+    <h3>Face Capture (Optional)</h3>
+
+    <video id="video" width="320" height="240" autoplay></video><br><br>
+    <button type="button" onclick="captureFace()">Capture Face</button><br><br>
+
+    <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+
+    <input type="file" name="face_image" id="face-image" hidden>
+
+    <br>
+    <button type="submit">Register</button>
+
 </form>
+
+<script src="{{ url_for('static', filename='register_cam.js') }}"></script>
+
 </body>
 </html>
+

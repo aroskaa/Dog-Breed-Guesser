@@ -1,12 +1,39 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>Login</title>
+</head>
 <body>
-<h2>Login</h2>
-<form method="post">
-    <input name="username" placeholder="Username" required><br>
+
+<h2>Login Password</h2>
+<form method="POST">
+    <input type="text" name="username" placeholder="Username" required><br>
     <input type="password" name="password" placeholder="Password" required><br>
-    <button>Login</button>
+    <button type="submit">Login</button>
 </form>
+
+<hr>
+
+<h2>Login with Face</h2>
+
+<input type="text" id="face-username" placeholder="Username"><br><br>
+
+<video id="video" width="320" height="240" autoplay></video><br>
+<button onclick="captureFace()">Login with Face</button>
+
+<canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+
+<form id="face-form" method="POST" action="/login-face" enctype="multipart/form-data">
+    <input type="hidden" name="username" id="hidden-username">
+    <input type="file" name="face_image" id="face-image" hidden>
+</form>
+
+
 <a href="/register">Register</a>
+
+<script src="{{ url_for('static', filename='webcam.js') }}"></script>
+
 </body>
 </html>
+
+
