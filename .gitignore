@@ -41,3 +41,11 @@ Thumbs.db
 
 # Flask
 instance/
+
+uploads/
+images/
+*.jpg
+*.png
+
+!static/*.png
+!static/*.jpg

@@ -119,6 +119,9 @@ def login_face():
     stored_hist = user_data["face_histogram"]
 
     score = compare_histograms(input_hist, stored_hist)
+    
+    if os.path.exists(face_path):
+        os.remove(face_path)
 
     if score > 0.75:
         session["user"] = username
@@ -139,12 +142,15 @@ def register():
         if "face_image" in request.files:
             face_file = request.files["face_image"]
 
-            if face_file.filename != "":
+            if face_file.filename != "":    
                 face_path = os.path.join(FACE_FOLDER, f"{username}.jpg")
                 face_file.save(face_path)
 
                 face_hist = extract_face_histogram(face_path)
                 
+                if os.path.exists(face_path):
+                    os.remove(face_path)
+    
         db.collection("users").document(username).set({
             "username": username,
             "password": password,
