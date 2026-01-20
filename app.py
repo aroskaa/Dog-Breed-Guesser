@@ -208,6 +208,8 @@ def dashboard():
 
         save_result = save_image_with_fallback(file)
         filepath = save_result["path"]
+        relative_path = filepath.replace("uploads/images/", "images/")
+        
         storage_type = save_result["storage"]
 
         img = image.load_img(filepath, target_size=(224, 224))
@@ -226,7 +228,7 @@ def dashboard():
         # SIMPAN KE FIRESTORE
         db.collection("history").add({
             "username": session["user"],
-            "image_path": filepath,
+            "image_path": relative_path,
             "storage_type": storage_type,
             "predictions": predictions,
             "created_at": datetime.now(),
