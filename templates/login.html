@@ -82,27 +82,27 @@
         </div>
 
         <!-- PASSWORD LOGIN -->
-        <div class="mb-4">
-            <div class="section-title mb-2">Password Login</div>
+            <div class="mb-4">
+                <div class="section-title mb-2">Password Login</div>
 
-            <form method="POST">
-                <div class="mb-3">
-                    <input type="text" name="username" class="form-control" placeholder="Username" required>
-                </div>
-                <div class="mb-3">
-                    <input type="password" name="password" class="form-control" placeholder="Password" required>
-                </div>
-                <button class="btn btn-dark w-100">Login</button>
-            </form>
-        </div>
+                <form method="POST">
+                    <div class="mb-3">
+                        <input type="text" name="username" class="form-control" placeholder="Username" required autocomplete="off">
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" name="password" class="form-control" placeholder="Password" required autocomplete="off">
+                    </div>
+                    <button class="btn btn-dark w-100">Login</button>
+                </form>
+            </div>
 
         <!-- FACE LOGIN -->
         <div>
             <div class="section-title mb-2">Face Login</div>
 
-            <input type="text" id="face-username" class="form-control mb-2" placeholder="Username">
+            <input type="text" id="face-username" class="form-control mb-2" placeholder="Username" autocomplete="off">
 
-            <video id="video" class="w-100 rounded border mb-2" autoplay></video>
+            <video id="video" class="w-100 rounded border mb-2" autoplay ></video>
 
             <button class="btn btn-outline-dark w-100" onclick="captureFace()">
                 Login with Face
